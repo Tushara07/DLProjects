@@ -4,7 +4,8 @@ import os
 
 from PIL import Image
 
-import tflite_runtime.interpreter as tflite
+from tensorflow.keras.models import load_model
+
 
 BASE_DIR = os.path.dirname(
     os.path.abspath(__file__)
@@ -16,18 +17,14 @@ MODELS_DIR = os.path.join(
     "models"
 )
 
-interpreter = tflite.Interpreter(
-    model_path=os.path.join(
+
+model = load_model(
+    os.path.join(
         MODELS_DIR,
-        "fashion_mnist_cnn.tflite"
+        "fashion_mnist_cnn.keras"
     )
 )
 
-interpreter.allocate_tensors()
-
-input_details = interpreter.get_input_details()
-
-output_details = interpreter.get_output_details()
 
 class_names = [
 
@@ -102,18 +99,7 @@ if uploaded_file is not None:
         1
     )
 
-    img_array = img_array.astype(np.float32)
-
-    interpreter.set_tensor(
-        input_details[0]['index'],
-        img_array
-    )
-
-    interpreter.invoke()
-
-    prediction = interpreter.get_tensor(
-        output_details[0]['index']
-    )
+    prediction = model.predict(img_array)
 
     pred_class = np.argmax(prediction)
 
@@ -126,6 +112,7 @@ if uploaded_file is not None:
     st.write(
         f"Confidence : {confidence*100:.2f}%"
     )
+
 
 import pandas as pd
 
