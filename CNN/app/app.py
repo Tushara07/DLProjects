@@ -18,13 +18,15 @@ MODELS_DIR = os.path.join(
 )
 
 
+
 model = load_model(
     os.path.join(
         MODELS_DIR,
         "fashion_mnist_cnn.keras"
-    )
+    ),
+    compile=False,
+    safe_mode=False
 )
-
 
 class_names = [
 
