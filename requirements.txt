@@ -1,8 +1,10 @@
 streamlit
-numpy
-pandas
 scikit-learn
 joblib
 matplotlib
 seaborn
-tensorflow
+tensorflow==2.20.0
+keras==3.13.2
+numpy==1.26.4
+pandas
+pillow
