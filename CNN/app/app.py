@@ -192,22 +192,22 @@ if uploaded_file is not None:
     )
 
 
-import pandas as pd
+    import pandas as pd
 
-probabilities = prediction[0]
+    probabilities = prediction[0]
 
-result_df = pd.DataFrame({
+    result_df = pd.DataFrame({
 
-    "Class": class_names,
+        "Class": class_names,
 
-    "Probability (%)": probabilities*100
+        "Probability (%)": probabilities*100
 
-})
+    })
 
-st.subheader("Prediction Probabilities")
+    st.subheader("Prediction Probabilities")
 
-st.bar_chart(
+    st.bar_chart(
 
-    result_df.set_index("Class")
+        result_df.set_index("Class")
 
-)
+    )
