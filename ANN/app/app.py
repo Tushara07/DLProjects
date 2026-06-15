@@ -2,10 +2,12 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
+import joblib
 import os
 
-from tensorflow.keras.models import load_model
-
+# -------------------------------
+# Paths
+# -------------------------------
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -15,14 +17,54 @@ MODELS_DIR = os.path.join(
     "models"
 )
 
+# -------------------------------
+# Load weights
+# -------------------------------
 
-model = load_model(
+weights = joblib.load(
     os.path.join(
         MODELS_DIR,
-        "breast_cancer_ann.keras"
+        "weights.pkl"
     )
 )
 
+W1, b1, W2, b2, W3, b3 = weights
+
+
+# -------------------------------
+# Activation functions
+# -------------------------------
+
+def relu(x):
+    return np.maximum(0, x)
+
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+
+# -------------------------------
+# ANN Prediction
+# -------------------------------
+
+def predict_ann(x):
+
+    z1 = np.dot(x, W1) + b1
+    a1 = relu(z1)
+
+    z2 = np.dot(a1, W2) + b2
+    a2 = relu(z2)
+
+    z3 = np.dot(a2, W3) + b3
+
+    output = sigmoid(z3)
+
+    return output
+
+
+# -------------------------------
+# Load scaler
+# -------------------------------
 
 with open(
     os.path.join(
@@ -35,6 +77,10 @@ with open(
     scaler = pickle.load(f)
 
 
+# -------------------------------
+# Load feature columns
+# -------------------------------
+
 with open(
     os.path.join(
         MODELS_DIR,
@@ -45,6 +91,10 @@ with open(
 
     feature_columns = pickle.load(f)
 
+
+# -------------------------------
+# UI
+# -------------------------------
 
 st.title("Breast Cancer Prediction using ANN")
 
@@ -114,12 +164,15 @@ if st.button("Predict"):
         input_data
     )
 
-    prediction = model.predict(
+    input_scaled = input_scaled.astype(
+        np.float32
+    )
+
+    prediction = predict_ann(
         input_scaled
     )
 
     probability = prediction[0][0]
-
 
     if probability > 0.5:
 
@@ -135,7 +188,6 @@ if st.button("Predict"):
             f"Probability : {(1-probability)*100:.2f}%"
         )
 
-    
     st.subheader("Input Feature Values")
 
     chart_data = pd.DataFrame({
