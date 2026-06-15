@@ -4,7 +4,6 @@ joblib
 matplotlib
 seaborn
 tensorflow==2.20.0
-keras==3.13.2
 numpy==1.26.4
 pandas
 pillow
